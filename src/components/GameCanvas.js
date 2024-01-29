@@ -10,12 +10,17 @@ const GameCanvas = () => {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
 
-    const playerWidth = 50;
+    const playerImage = new Image();
+    playerImage.src = '/little-lion.png';
+
+    const playerWidth = 55;
     const playerHeight = 50;
     const playerX = 100; // 플레이어의 X 위치는 고정
-    const gravity = 1.5;
+    const gravity = 1;
     let velocity = 0;
-    const jumpHeight = 15;
+    const jumpHeight = 30;
+    let isObsInt = false;
+    let isOver = false;
 
     // 플레이어 점프 처리
     const handleJump = () => {
@@ -24,27 +29,22 @@ const GameCanvas = () => {
         }
     };
 
-    // 장애물 생성
-    const addObstacle = (timestamp) => {
-        if (obstacles.length === 0 || (obstacles.length > 0 && canvasRef.current.width - obstacles[obstacles.length - 1].x > 200)) {
-            setObstacles([...obstacles, { x: canvasRef.current.width, width: 20, height: 50 }]);
-        }
+    const addObstacle = () => {
+        console.log("AddObstacle called");
+        const newObstacle = { x: canvasRef.current.width, y: FLOOR_Y_POS - 50, width: 30, height: 60 };
 
-        obstacleIntervalRef.current = setInterval(addObstacle, 2000); // 2초마다 장애물 생성
-
-        return () => {
-            window.removeEventListener('keydown', handleJump);
-            clearInterval(obstacleIntervalRef.current);
-            cancelAnimationFrame(requestRef.current);
-        };
+        obstacles.push(newObstacle);
     };
+
 
     // 충돌 감지
     const checkCollision = (obstacle) => {
+        console.log("Collison");
         const withinXRange = playerX + playerWidth > obstacle.x && playerX < obstacle.x + obstacle.width;
-        const withinYRange = playerY < obstacle.height;
+        const withinYRange = playerY < obstacle.y + obstacle.height;
 
         if (withinXRange && withinYRange) {
+            isOver = true;
             setGameOver(true);
             cancelAnimationFrame(requestRef.current);
         }
@@ -52,32 +52,34 @@ const GameCanvas = () => {
 
     // 게임 업데이트
     const updateGame = (timestamp) => {
-        addObstacle(timestamp);
+        if (!isOver) {
+            setPlayerY(playerY => {
+                let newY = playerY + velocity;
+                velocity += gravity;
 
-        setPlayerY(playerY => {
-            let newY = playerY + velocity;
-            velocity += gravity;
+                if (newY > FLOOR_Y_POS) {
+                    newY = FLOOR_Y_POS; // 땅에 닿으면 멈춤
+                    velocity = 0;
+                }
 
-            if (newY > FLOOR_Y_POS) {
-                newY = FLOOR_Y_POS; // 땅에 닿으면 멈춤
-                velocity = 0;
-            }
+                return newY;
+            });
 
-            return newY;
-        });
+            console.log(obstacles.length)
 
-        const newObstacles = obstacles.map(obstacle => {
-            return { ...obstacle, x: obstacle.x - 5 };
-        }).filter(obstacle => obstacle.x + obstacle.width > 0);
+            const newObstacles = obstacles.map(obstacle => {
+                return { ...obstacle, x: obstacle.x -= 5 };
+            }).filter(obstacle => obstacle.x + obstacle.width > 0);
 
-        setObstacles(newObstacles);
-        newObstacles.forEach(checkCollision);
+            setObstacles(newObstacles);
+            obstacles.forEach(checkCollision);
 
-        if (!gameOver) {
+
             setScore(prevScore => prevScore + 1);
             requestRef.current = requestAnimationFrame(updateGame);
         }
     };
+
 
     useEffect(() => {
         window.addEventListener('keydown', (e) => {
@@ -88,8 +90,16 @@ const GameCanvas = () => {
 
         requestRef.current = requestAnimationFrame(updateGame);
 
+        if (isObsInt != true) {
+            isObsInt = true;
+            obstacleIntervalRef.current = setInterval(() => {
+                addObstacle();
+            }, 2000);
+        }
+
         return () => {
             window.removeEventListener('keydown', handleJump);
+            clearInterval(obstacleIntervalRef.current); // 클린업에서 인터벌 해제
             cancelAnimationFrame(requestRef.current);
         };
     }, []);
@@ -99,13 +109,12 @@ const GameCanvas = () => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         // 플레이어 그리기
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(playerX, playerY - playerHeight, playerWidth, playerHeight);
+        ctx.drawImage(playerImage, playerX, playerY - playerHeight, playerWidth, playerHeight);
 
         // 장애물 그리기
         obstacles.forEach(obstacle => {
             ctx.fillStyle = 'red';
-            ctx.fillRect(obstacle.x, canvasRef.current.height - obstacle.height, obstacle.width, obstacle.height);
+            ctx.fillRect(obstacle.x, FLOOR_Y_POS - obstacle.height, obstacle.width, obstacle.height); // 장애물 그리기 Y 좌표 수정
         });
 
     }, [playerY, obstacles]);
@@ -114,9 +123,9 @@ const GameCanvas = () => {
         <div>
             <canvas
                 ref={canvasRef}
-                width={800}
+                width={700}
                 height={FLOOR_Y_POS}
-                style={{ border: '1px solid black' }}
+                style={{ border: '5px solid black' }}
             />
             <div>Score: {score}</div>
             {gameOver && <div>Game Over. Final Score: {score}</div>}
