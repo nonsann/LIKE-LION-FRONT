@@ -113,22 +113,22 @@ const GameCanvas = () => {
 
         // 장애물 그리기
         obstacles.forEach(obstacle => {
-            ctx.fillStyle = 'red';
+            ctx.fillStyle = '#FF2511';
             ctx.fillRect(obstacle.x, FLOOR_Y_POS - obstacle.height, obstacle.width, obstacle.height); // 장애물 그리기 Y 좌표 수정
         });
 
     }, [playerY, obstacles]);
 
     return (
-        <div>
+        <div style={{ background: 'black' }}>
             <canvas
                 ref={canvasRef}
                 width={700}
                 height={FLOOR_Y_POS}
-                style={{ border: '5px solid black' }}
+                style={{ border: '5px solid white' }}
             />
-            <div>Score: {score}</div>
-            {gameOver && <div>Game Over. Final Score: {score}</div>}
+            <div style={{ color: 'white' }}>Score: {score}</div>
+            {gameOver && <div style={{ color: 'white' }}>Game Over. Final Score: {score}</div>}
         </div>
     );
 };
