@@ -19,6 +19,7 @@ const GameCanvas = () => {
     const gravity = 1;
     let velocity = 0;
     const jumpHeight = 30;
+    let curY = 0;
     let isObsInt = false;
     let isOver = false;
 
@@ -30,8 +31,11 @@ const GameCanvas = () => {
     };
 
     const addObstacle = () => {
-        console.log("AddObstacle called");
-        const newObstacle = { x: canvasRef.current.width, y: FLOOR_Y_POS - 50, width: 30, height: 60 };
+        const minHeight = 30;
+        const maxHeight = 300;
+        const randomHeight = Math.random() * (maxHeight - minHeight) + minHeight;
+
+        const newObstacle = { x: canvasRef.current.width, y: FLOOR_Y_POS - randomHeight, width: 30, height: randomHeight };
 
         obstacles.push(newObstacle);
     };
@@ -39,9 +43,9 @@ const GameCanvas = () => {
 
     // 충돌 감지
     const checkCollision = (obstacle) => {
-        console.log("Collison");
         const withinXRange = playerX + playerWidth > obstacle.x && playerX < obstacle.x + obstacle.width;
-        const withinYRange = playerY < obstacle.y + obstacle.height;
+        const withinYRange = curY > obstacle.y;
+        console.log(withinYRange + " " + obstacle.y + ":::" + curY)
 
         if (withinXRange && withinYRange) {
             isOver = true;
@@ -62,10 +66,9 @@ const GameCanvas = () => {
                     velocity = 0;
                 }
 
+                curY = newY;
                 return newY;
             });
-
-            console.log(obstacles.length)
 
             const newObstacles = obstacles.map(obstacle => {
                 return { ...obstacle, x: obstacle.x -= 5 };
@@ -73,7 +76,6 @@ const GameCanvas = () => {
 
             setObstacles(newObstacles);
             obstacles.forEach(checkCollision);
-
 
             setScore(prevScore => prevScore + 1);
             requestRef.current = requestAnimationFrame(updateGame);
@@ -94,7 +96,7 @@ const GameCanvas = () => {
             isObsInt = true;
             obstacleIntervalRef.current = setInterval(() => {
                 addObstacle();
-            }, 2000);
+            }, 1000);
         }
 
         return () => {
@@ -120,15 +122,15 @@ const GameCanvas = () => {
     }, [playerY, obstacles]);
 
     return (
-        <div style={{ background: 'black' }}>
+        <div style={{ background: 'black', width: '100%' }}>
             <canvas
                 ref={canvasRef}
-                width={700}
+                width={600}
                 height={FLOOR_Y_POS}
-                style={{ border: '5px solid white' }}
+                style={{ border: '5px solid white', display: 'block', margin: '0 auto' }}
             />
-            <div style={{ color: 'white' }}>Score: {score}</div>
-            {gameOver && <div style={{ color: 'white' }}>Game Over. Final Score: {score}</div>}
+            {!gameOver && <div style={{ textAlign: 'center', color: 'white' }}>Score: {score}</div>}
+            {gameOver && <div style={{ textAlign: 'center', color: 'white' }}>Game Over. Final Score: {score}</div>}
         </div>
     );
 };
