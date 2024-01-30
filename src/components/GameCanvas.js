@@ -28,14 +28,35 @@ const GameCanvas = () => {
         if (!gameOver && playerY === FLOOR_Y_POS) { // 플레이어가 땅에 있을 때만 점프 가능
             velocity = -jumpHeight;
         }
+
+        if (isOver)
+            initGame();
     };
+
+    const initGame = () => {
+        isOver = false;
+        setGameOver(false);
+
+        const newObstacles = obstacles.map(obstacle => {
+            return { ...obstacle, x: obstacle.x -= 10000 };
+        }).filter(obstacle => obstacle.x + obstacle.width > 0);
+
+        setObstacles([]);
+        setScore(0);
+
+        requestAnimationFrame(updateGame)
+        obstacleIntervalRef.current = setInterval(() => {
+            addObstacle();
+        }, 1000);
+    }
 
     const addObstacle = () => {
         const minHeight = 30;
         const maxHeight = 300;
         const randomHeight = Math.random() * (maxHeight - minHeight) + minHeight;
+        const randomWidth = Math.random() * (200 - 30) + 30;
 
-        const newObstacle = { x: canvasRef.current.width, y: FLOOR_Y_POS - randomHeight, width: 30, height: randomHeight };
+        const newObstacle = { x: canvasRef.current.width, y: FLOOR_Y_POS - randomHeight, width: randomWidth, height: randomHeight };
 
         obstacles.push(newObstacle);
     };
@@ -51,6 +72,7 @@ const GameCanvas = () => {
             isOver = true;
             setGameOver(true);
             cancelAnimationFrame(requestRef.current);
+            clearInterval(obstacleIntervalRef.current);
         }
     };
 
@@ -63,6 +85,11 @@ const GameCanvas = () => {
 
                 if (newY > FLOOR_Y_POS) {
                     newY = FLOOR_Y_POS; // 땅에 닿으면 멈춤
+                    velocity = 0;
+                }
+
+                if (newY <= 0) {
+                    newY = FLOOR_Y_POS;
                     velocity = 0;
                 }
 
@@ -123,14 +150,14 @@ const GameCanvas = () => {
 
     return (
         <div style={{ background: 'black', width: '100%' }}>
+            {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '15px' }}>Score: {score}</div>}
+            {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '15px' }}>Final Score: {score}</div>}
             <canvas
                 ref={canvasRef}
                 width={600}
                 height={FLOOR_Y_POS}
                 style={{ border: '5px solid white', display: 'block', margin: '0 auto' }}
             />
-            {!gameOver && <div style={{ textAlign: 'center', color: 'white' }}>Score: {score}</div>}
-            {gameOver && <div style={{ textAlign: 'center', color: 'white' }}>Game Over. Final Score: {score}</div>}
         </div>
     );
 };
