@@ -4,7 +4,7 @@ import GameCanvas from './components/GameCanvas';
 function App() {
   const appStyle = {
     background: 'black',
-    minHeight: '100vh', // 최소 뷰포트 높이까지 채우도록 설정
+    minHeight: '100vh',
   };
 
   return (
