@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Signup.css'; 
+import './Signup.css';
 
 function Signup() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('회원가입:', email, password);
+    console.log('회원가입:', name, email, password);
     navigate('/');
   };
 
@@ -17,6 +18,15 @@ function Signup() {
     <div className="signup-container"> {/* CSS 클래스 적용 */}
       <h2>아기사자 회원가입</h2>
       <form onSubmit={handleSubmit} className="signup-form"> {/* CSS 클래스 적용 */}
+        <div>
+          <label>이름 </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
         <div>
           <label>이메일 </label>
           <input
