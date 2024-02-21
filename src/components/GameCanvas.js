@@ -29,27 +29,11 @@ const GameCanvas = () => {
         if (!gameOver && playerY === FLOOR_Y_POS) { // 플레이어가 땅에 있을 때만 점프 가능
             velocity = -jumpHeight;
         }
-
-        if (isOver)
-            initGame();
     };
 
-    const initGame = () => {
-        isOver = false;
-        setGameOver(false);
-
-        const newObstacles = obstacles.map(obstacle => {
-            return { ...obstacle, x: obstacle.x -= 10000 };
-        }).filter(obstacle => obstacle.x + obstacle.width > 0);
-
-        setObstacles([]);
-        setScore(0);
-
-        requestAnimationFrame(updateGame)
-        obstacleIntervalRef.current = setInterval(() => {
-            addObstacle();
-        }, 1000);
-    }
+    const restartGame = () => {
+        window.location.reload();
+    };
 
     const addObstacle = () => {
         const minHeight = 30;
@@ -150,7 +134,7 @@ const GameCanvas = () => {
     }, [playerY, obstacles]);
 
     return (
-        <div style={{ background: 'black', width: '100%' }}>
+        <div class="container" style={{ background: 'black', width: '100%' }}>
             <br />
             {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Score: {score}</div>}
             {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Final Score: {score}</div>}
@@ -160,6 +144,12 @@ const GameCanvas = () => {
                 height={FLOOR_Y_POS}
                 style={{ border: '5px solid white', display: 'block', margin: '0 auto' }}
             />
+
+            {gameOver && <div class="button-container">
+                <button onClick={restartGame}>
+                    Restart Game
+                </button>
+            </div>}
         </div>
     );
 };
