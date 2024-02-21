@@ -37,3 +37,8 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'DNFBitBit';
+  src: url('./fonts/DNFBitBit.ttf') format('truetype');
+}

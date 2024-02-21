@@ -43,7 +43,7 @@ function Login() {
         <button type="submit">로그인</button>
         {/* 회원가입 페이지로 이동하는 링크 추가 */}
         <p>
-          처음 와본 아기사자인가요? <Link to="/signup">회원가입</Link>
+          처음 온 아기사자인가요? <Link to="/signup">회원가입</Link>
         </p>
       </form>
     </div>

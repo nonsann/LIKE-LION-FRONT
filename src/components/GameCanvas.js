@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './GameCanvas.css';
 
 const FLOOR_Y_POS = 500;
 const GameCanvas = () => {
@@ -150,8 +151,9 @@ const GameCanvas = () => {
 
     return (
         <div style={{ background: 'black', width: '100%' }}>
-            {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '15px' }}>Score: {score}</div>}
-            {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '15px' }}>Final Score: {score}</div>}
+            <br />
+            {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Score: {score}</div>}
+            {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Final Score: {score}</div>}
             <canvas
                 ref={canvasRef}
                 width={600}

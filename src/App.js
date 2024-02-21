@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import GameCanvas from './components/GameCanvas';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import './index.css';
 
 function App() {
   const appStyle = {

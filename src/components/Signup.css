@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'DNFBitBit';
+  src: url('../../public/fonts/DNFBitBit.ttf') format('truetype');
+}
+
+body {
+  font-family: 'DNFBitBit', sans-serif;
+}
+
 .signup-container {
   max-width: 400px;
   margin: auto;
@@ -34,6 +43,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-family: 'DNFBitBit', sans-serif;
 }
 
 .signup-form button:hover {

@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'DNFBitBit';
+    src: url('../../public/fonts/DNFBitBit.ttf') format('truetype');
+}
+
+body {
+    font-family: 'DNFBitBit', sans-serif;
+}
