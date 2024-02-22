@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
@@ -8,10 +9,30 @@ function Signup() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('회원가입:', name, email, password);
-    navigate('/');
+
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_HOST}/auth/signup/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.msg === 'Success') {
+      toast.success('회원가입 성공!');
+      navigate('/');
+    } else {
+      toast.error('회원가입 실패 ㅠㅜ');
+    }
   };
 
   return (

@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import GameCanvas from './components/GameCanvas';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import './index.css';
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/game" element={<GameCanvas />} />
         </Routes>
+        <ToastContainer />
       </div>
     </Router>
   );

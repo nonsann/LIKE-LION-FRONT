@@ -137,7 +137,7 @@ const GameCanvas = () => {
         <div class="container" style={{ background: 'black', width: '100%' }}>
             <br />
             {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Score: {score}</div>}
-            {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Final Score: {score}</div>}
+            {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px', color: '#00ff8a' }}>Final Score: {score}</div>}
             <canvas
                 ref={canvasRef}
                 width={600}
