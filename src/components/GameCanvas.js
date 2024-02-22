@@ -10,6 +10,9 @@ const GameCanvas = () => {
     const [obstacles, setObstacles] = useState([]);
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
+    const [isBoard, setIsBoard] = useState(false);
+    // LeaderBoard
+    const [leaderBoard, setLeaderBoard] = useState([]);
 
     const playerImage = new Image();
     playerImage.src = '/little-lion.png';
@@ -33,6 +36,10 @@ const GameCanvas = () => {
 
     const restartGame = () => {
         window.location.reload();
+    };
+
+    const toggleBoard = () => {
+        setIsBoard(true);
     };
 
     const addObstacle = () => {
@@ -90,12 +97,16 @@ const GameCanvas = () => {
             obstacles.forEach(checkCollision);
 
             setScore(prevScore => prevScore + 1);
+
             requestRef.current = requestAnimationFrame(updateGame);
         }
     };
 
 
     useEffect(() => {
+        for (let i = 0; i < 10; i++)
+            leaderBoard.push({ rank: i + 1, name: 'N/A', score: 0 })
+
         window.addEventListener('keydown', (e) => {
             if (e.key === ' ' || e.keyCode === 32) {
                 handleJump();
@@ -138,12 +149,46 @@ const GameCanvas = () => {
             <br />
             {!gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px' }}>Score: {score}</div>}
             {gameOver && <div style={{ marginBottom: '20px', textAlign: 'center', color: 'white', fontSize: '23px', color: '#00ff8a' }}>Final Score: {score}</div>}
-            <canvas
+            {!isBoard && <canvas
                 ref={canvasRef}
                 width={600}
                 height={FLOOR_Y_POS}
                 style={{ border: '5px solid white', display: 'block', margin: '0 auto' }}
-            />
+            />}
+
+            {isBoard && (
+                <div className="leaderboard-container">
+                    <table className="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>이름</th>
+                                <th>점수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leaderBoard.map((item) => (
+                                <tr key={item.rank}>
+                                    <td>
+                                        {item.rank === 1 && <img src="/1st.png" alt="1st" />}
+                                        {item.rank === 2 && <img src="/2nd.png" alt="2nd" />}
+                                        {item.rank === 3 && <img src="/3rd.png" alt="3rd" />}
+                                        {item.rank > 3 && `${item.rank}th`}
+                                    </td>
+                                    <td>{item.name}</td>
+                                    <td>{item.score}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {gameOver && <div class="button-container">
+                <button onClick={toggleBoard}>
+                    Leader Board
+                </button>
+            </div>}
 
             {gameOver && <div class="button-container">
                 <button onClick={restartGame}>
