@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css'; // CSS 파일 import
@@ -7,10 +8,35 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('로그인:', email, password);
-    navigate('/game'); // 로그인 성공 시 게임 페이지로 이동
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_HOST}/auth/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.msg === 'Success') {
+        localStorage.setItem('accessToken', data.token);
+        toast.success(data.name + '님 반가워요!');
+        navigate('/game');
+      } else {
+        toast.error('로그인 실패 ㅠㅜ');
+      }
+    } catch (error) {
+      console.error('Login Error : ', error);
+      toast.error('로그인 중 오류 발생..');
+    }
   };
 
   return (
