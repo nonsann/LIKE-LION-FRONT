@@ -184,7 +184,7 @@ const GameCanvas = () => {
                 </div>
             )}
 
-            {gameOver && <div class="button-container">
+            {!isBoard && gameOver && <div class="button-container">
                 <button onClick={toggleBoard}>
                     Leader Board
                 </button>
